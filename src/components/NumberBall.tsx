@@ -8,6 +8,7 @@ interface NumberBallProps {
   onClick?: () => void;
   disabled?: boolean;
   size?: "sm" | "md" | "lg";
+  className?: string;
 }
 
 export const NumberBall = ({
@@ -18,24 +19,26 @@ export const NumberBall = ({
   onClick,
   disabled = false,
   size = "md",
+  className,
 }: NumberBallProps) => {
+  // Tamanhos responsivos
   const sizeClasses = {
-    sm: "w-8 h-8 text-sm",
-    md: "w-11 h-11 text-base",
-    lg: "w-14 h-14 text-lg",
+    sm: "w-7 h-7 text-xs sm:w-8 sm:h-8 sm:text-sm",
+    md: "w-9 h-9 text-sm sm:w-11 sm:h-11 sm:text-base",
+    lg: "w-11 h-11 text-base sm:w-14 sm:h-14 sm:text-lg",
   };
 
   const getMatchColor = () => {
     if (!matched) return "";
     switch (matchType) {
       case 15:
-        return "bg-ball-match15 text-primary-foreground shadow-glow";
+        return "bg-gradient-to-br from-green-500 to-emerald-600 text-white shadow-lg shadow-green-500/30";
       case 14:
-        return "bg-ball-match14 text-primary-foreground";
+        return "bg-gradient-to-br from-blue-500 to-cyan-600 text-white shadow-lg shadow-blue-500/30";
       case 13:
-        return "bg-ball-match13 text-primary-foreground";
+        return "bg-gradient-to-br from-purple-500 to-pink-600 text-white shadow-lg shadow-purple-500/30";
       default:
-        return "bg-primary text-primary-foreground";
+        return "bg-gradient-to-br from-primary to-primary/90 text-primary-foreground";
     }
   };
 
@@ -45,14 +48,19 @@ export const NumberBall = ({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        "rounded-full font-medium flex items-center justify-center transition-all duration-300 ease-out",
+        "rounded-full font-bold flex items-center justify-center transition-all duration-200",
+        "touch-manipulation", // Otimiza para touch
+        "active:scale-95",
         sizeClasses[size],
-        !selected && !matched && "bg-ball-default text-foreground hover:bg-accent hover:scale-105",
-        selected && !matched && "bg-ball-selected text-primary-foreground shadow-soft scale-105",
+        !selected && !matched && "bg-gradient-to-br from-gray-100 to-gray-200 text-gray-800 hover:from-gray-200 hover:to-gray-300 border border-gray-300",
+        selected && !matched && "bg-gradient-to-br from-primary to-primary/90 text-white shadow-md scale-105 border-2 border-primary/20",
         matched && getMatchColor(),
-        disabled && "cursor-default",
-        !disabled && "cursor-pointer active:scale-95"
+        disabled && "cursor-default opacity-80",
+        !disabled && "cursor-pointer hover:scale-110 hover:shadow-md",
+        "select-none", // Evita seleção de texto
+        className
       )}
+      aria-label={`Número ${number}`}
     >
       {number.toString().padStart(2, "0")}
     </button>
