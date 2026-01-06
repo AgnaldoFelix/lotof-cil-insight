@@ -5,6 +5,8 @@ import { StatsCard } from "@/components/StatsCard";
 import { AutoStrategyGenerator } from "@/components/AutoStrategyGenerator";
 import { lotofacilResults, calculateMatches, getMatchedNumbers } from "@/data/lotofacilResults";
 import { Button } from "@/components/ui/button";
+import { MonthlyPlanGenerator, MonthlyStrategy } from '@/components/MonthlyPlanGenerator';
+
 import { 
   Sparkles, 
   RotateCcw, 
@@ -20,11 +22,13 @@ import {
   Zap,
   Snowflake
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const Index = () => {
   const [selectedNumbers, setSelectedNumbers] = useState<number[]>([]);
   const [hasSimulated, setHasSimulated] = useState(false);
   const [showStrategies, setShowStrategies] = useState(false);
+  const [monthlyStrategy, setMonthlyStrategy] = useState<MonthlyStrategy | null>(null);
 
   const handleToggleNumber = (num: number) => {
     setSelectedNumbers((prev) =>
@@ -172,6 +176,65 @@ const Index = () => {
             </div>
           )}
         </section>
+
+        {/* Plano Mensal Estratégico */}
+<section className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+  <MonthlyPlanGenerator 
+    budget={74}
+    onSelectStrategy={setMonthlyStrategy}
+    selectedStrategy={monthlyStrategy}
+  />
+  
+  {monthlyStrategy && (
+    <div className="mt-6 pt-6 border-t border-gray-100 animate-fade-in">
+      <div className="flex items-center justify-between mb-4">
+        <h4 className="font-bold text-gray-900">Estratégia Mensal Selecionada</h4>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setSelectedNumbers(monthlyStrategy.numbers)}
+          className="text-primary"
+        >
+          <TrendingUp className="h-4 w-4 mr-2" />
+          Usar nos Números
+        </Button>
+      </div>
+      
+      <div className="bg-gradient-to-r from-gray-50 to-white rounded-lg p-4 border">
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          <div>
+            <p className="text-sm text-gray-600">Ímpares/Pares</p>
+            <p className="text-lg font-bold text-gray-900">
+              {monthlyStrategy.analysis.oddEvenBalance.odd}/{monthlyStrategy.analysis.oddEvenBalance.even}
+            </p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-600">Faixa de Soma</p>
+            <p className="text-lg font-bold text-gray-900">
+              {monthlyStrategy.analysis.sumRange}
+            </p>
+          </div>
+        </div>
+        
+        <div className="flex flex-wrap gap-1.5">
+          {monthlyStrategy.numbers.map(num => (
+            <span
+              key={num}
+              className={cn(
+                "px-2.5 py-1 rounded-full text-xs font-bold",
+                selectedNumbers.includes(num) 
+                  ? "bg-green-100 text-green-700 border border-green-300"
+                  : "bg-gray-100 text-gray-700 border border-gray-300"
+              )}
+            >
+              {num.toString().padStart(2, '0')}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  )}
+</section>
 
         {/* Seletor de Números */}
         <section className="bg-white rounded-2xl border border-gray-200 p-4 sm:p-6 shadow-sm">
