@@ -20,7 +20,8 @@ import {
   Star,
   Target,
   Zap,
-  Snowflake
+  Snowflake,
+  Calendar
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -28,6 +29,7 @@ const Index = () => {
   const [selectedNumbers, setSelectedNumbers] = useState<number[]>([]);
   const [hasSimulated, setHasSimulated] = useState(false);
   const [showStrategies, setShowStrategies] = useState(false);
+  const [showMonthlyPlan, setShowMonthlyPlan] = useState(false);
   const [monthlyStrategy, setMonthlyStrategy] = useState<MonthlyStrategy | null>(null);
 
   const handleToggleNumber = (num: number) => {
@@ -45,6 +47,14 @@ const Index = () => {
     setSelectedNumbers([]);
     setHasSimulated(false);
   };
+
+
+    const handleSelectMonthlyStrategy = (strategy: MonthlyStrategy) => {
+    setMonthlyStrategy(strategy);
+    setSelectedNumbers(strategy.numbers);
+    setHasSimulated(false);
+  };
+
 
   const handleSimulate = () => {
     if (selectedNumbers.length === 15) {
@@ -178,15 +188,41 @@ const Index = () => {
         </section>
 
         {/* Plano Mensal Estratégico */}
-<section className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-  <MonthlyPlanGenerator 
-    budget={74}
-    onSelectStrategy={setMonthlyStrategy}
-    selectedStrategy={monthlyStrategy}
-  />
-  
-  {monthlyStrategy && (
-    <div className="mt-6 pt-6 border-t border-gray-100 animate-fade-in">
+<section className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+  <button
+    onClick={() => setShowMonthlyPlan(!showMonthlyPlan)}
+    className="w-full p-4 flex items-center justify-between bg-gradient-to-r from-gray-50/50 to-white hover:from-gray-100/50 transition-colors"
+  >
+    <div className="flex items-center gap-3">
+      <div className="p-2 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5">
+        <Calendar className="h-5 w-5 text-primary" />
+      </div>
+      <div className="text-left">
+        <h2 className="font-bold text-gray-900 text-sm sm:text-base">
+          Plano Mensal Estratégico
+        </h2>
+        <p className="text-xs text-gray-600">Estratégias otimizadas para o mês</p>
+      </div>
+    </div>
+    <div className="flex items-center gap-2">
+      {showMonthlyPlan ? (
+        <ChevronUp className="h-5 w-5 text-gray-500" />
+      ) : (
+        <ChevronDown className="h-5 w-5 text-gray-500" />
+      )}
+    </div>
+  </button>
+
+  {showMonthlyPlan && (
+    <div className="p-6 border-t border-gray-100 animate-slide-down space-y-6">
+      <MonthlyPlanGenerator 
+        budget={74}
+        onSelectStrategy={handleSelectMonthlyStrategy}
+        selectedStrategy={monthlyStrategy}
+      />
+      
+      {monthlyStrategy && (
+        <div className="pt-6 border-t border-gray-100 animate-fade-in">
       <div className="flex items-center justify-between mb-4">
         <h4 className="font-bold text-gray-900">Estratégia Mensal Selecionada</h4>
         <Button
@@ -232,6 +268,8 @@ const Index = () => {
           ))}
         </div>
       </div>
+    </div>
+      )}
     </div>
   )}
 </section>
